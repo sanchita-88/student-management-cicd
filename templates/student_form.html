@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if student else 'Add' }} student · Student Manager{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="{{ url_for('index') }}">Students</a> / {{ 'Edit student' if student else 'New student' }}</p>
+<section class="form-panel">
+  <p class="eyebrow">STUDENT DIRECTORY</p><h1>{{ 'Edit student' if student else 'Add a student' }}</h1>
+  <p class="subheading">Enter the student's details below.</p>
+  <form method="post" class="student-form">
+    <label>Full name<input name="name" required maxlength="100" placeholder="e.g. Asha Patel" value="{{ request.form.get('name', student.name if student else '') }}"></label>
+    <label>Email address<input name="email" type="email" required maxlength="120" placeholder="asha@example.edu" value="{{ request.form.get('email', student.email if student else '') }}"></label>
+    <label>Course or programme<input name="course" required maxlength="100" placeholder="e.g. Computer Science" value="{{ request.form.get('course', student.course if student else '') }}"></label>
+    <label>Study year<select name="year" required><option value="">Select a year</option>{% for year in range(1, 9) %}<option value="{{ year }}" {% if request.form.get('year', student.year if student else '')|string == year|string %}selected{% endif %}>Year {{ year }}</option>{% endfor %}</select></label>
+    <div class="form-actions"><a class="button secondary" href="{{ url_for('index') }}">Cancel</a><button class="button primary" type="submit">{{ 'Save changes' if student else 'Add student' }}</button></div>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: students
+      POSTGRES_USER: students
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-only-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U students -d students"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://students:${POSTGRES_PASSWORD:-local-only-password}@db:5432/students
+      SECRET_KEY: ${SECRET_KEY:-local-development-key}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
